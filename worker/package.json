@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "ioredis": "^5.0.4",
+    "nodemon": "2.0.16",
+    "pg": "^8.7.3",
+    "typeorm": "^0.3.6"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon"
+  }
+}
