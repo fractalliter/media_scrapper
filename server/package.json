@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "ioredis": "^5.0.4",
+    "nodemon": "^2.0.16"
+  },
+  "scripts": {
+    "dev": "nodemon",
+    "start": "node index.js"
+  }
+}
