@@ -43,6 +43,27 @@ services:
   scraper:
     build:
       dockerfile: Dockerfile.dev
+      context: ./scraper
+    restart: unless-stopped
+    volumes:
+      - /app/node_modules
+      - ./scraper:/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PG_HOST=db
+      - PG_PORT=5432
+      - PG_PASSWORD=postgres
+      - PG_DATABASE=media
+      - PG_USER=postgres
+      - REDIS_CONSUMER_GROUP_NAME=scraper
+      - REDIS_STREAM_NAME =url_stream
+    #deploy:
+    #  mode: replicated
+    #  replicas: 5
+  url_worker:
+    build:
+      dockerfile: Dockerfile.dev
       context: ./worker
     restart: unless-stopped
     volumes:
@@ -56,6 +77,8 @@ services:
       - PG_PASSWORD=postgres
       - PG_DATABASE=media
       - PG_USER=postgres
+      - REDIS_CONSUMER_GROUP_NAME=url_worker
+      - REDIS_STREAM_NAME =url_stream
     #deploy:
     #  mode: replicated
     #  replicas: 5
