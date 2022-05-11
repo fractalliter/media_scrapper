@@ -1,4 +1,3 @@
-const { cpus } = require("node:os");
 const {
   PG_HOST = "localhost",
   PG_PORT = 5432,
@@ -9,7 +8,6 @@ const {
   REDIS_PORT = 6379,
   REDIS_CONSUMER_GROUP_NAME = "mygroup",
   REDIS_STREAM_NAME = "mystream",
-  NUMBER_OF_REPLICATIONS = cpus().length,
 } = process.env;
 
 module.exports = {
@@ -22,5 +20,4 @@ module.exports = {
   redisPort: REDIS_PORT,
   redisConsumerGoupName: REDIS_CONSUMER_GROUP_NAME,
   redisStreamName: REDIS_STREAM_NAME,
-  replicas: NUMBER_OF_REPLICATIONS,
 };
