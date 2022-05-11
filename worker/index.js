@@ -8,7 +8,8 @@ module.exports = DataSource.initialize()
 
 if (cluster.isMaster) {
   // Fork the process for every cpu on the machine with a processIndex environment varaible for every of them
-  for (let i = 0; i < os.cpus().length; i++) cluster.fork({ CPU_INDEX: i });
+  //for (let i = 0; i < os.cpus().length; i++) cluster.fork({ CPU_INDEX: i });
+  cluster.fork({ CPU_INDEX: 1 })
 } else {
   require("./service/worker");
 }
