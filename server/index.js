@@ -15,7 +15,6 @@ const redis = new Redis({
 // Express route handlers
 app.post("/url/", async (req, res) => {
   const data = req.body;
-  console.log(data);
   for (const url of data.urls) {
     await redis.xadd("mystream", "*", ...["url", url]);
   }

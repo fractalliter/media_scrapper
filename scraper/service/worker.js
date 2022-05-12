@@ -1,30 +1,21 @@
 const keys = require("../keys");
 const Redis = require("ioredis");
-const processMessage = require("./processor");
+const dataSource = require("../dao/db");
+const puppeteer = require("puppeteer-core");
 
+let browser = null;
+const mediaRepo = dataSource.getTreeRepository("medias");
 const redis = new Redis({
   host: keys.redisHost,
   port: keys.redisPort,
 });
-
-redis.xgroup(
-  "CREATE",
-  keys.redisStreamName,
-  keys.redisConsumerGoupName,
-  "$",
-  "MKSTREAM",
-  (err, res) => {
-    if (err) {
-      console.error(`[${process.pid}] -> group already exist`);
-    } else console.log(res);
-  }
-);
-
 async function listenForMessage(lastId = ">") {
   const results = await redis.xreadgroup(
     "GROUP",
     keys.redisConsumerGoupName,
     "scraper_consumer" + process.env.CPU_INDEX,
+    "BLOCK",
+    0,
     "COUNT",
     1,
     "STREAMS",
@@ -33,13 +24,77 @@ async function listenForMessage(lastId = ">") {
   );
   if (results) {
     const [key, messages] = results[0];
-
-    await messages.forEach(async (message) => {
-      processMessage(message);
-      await redis.xack("mystream", "mygroup", message[0]);
+    messages.forEach(async (message) => {
+      try {
+        const page = await browser.newPage();
+        await page.goto(message[1][1]);
+        const medias = await page.evaluate(() =>
+          [
+            Array.from(document.images).map((image) => ({
+              url: image.src,
+              media_type: "image",
+              media_metadata: image,
+            })),
+            Array.from(document.getElementsByTagName("video")).map((video) => ({
+              url: video.src,
+              media_type: "video",
+              media_metadata: video,
+            })),
+          ].flat()
+        );
+        await mediaRepo.save(medias);
+        redis.xack(
+          keys.redisStreamName,
+          keys.redisConsumerGoupName,
+          message[0],
+          (error, res) => {
+            if (error) {
+              redis.xadd(
+                keys.redisErrorStream,
+                "*",
+                ...[error.message, error.stack]
+              );
+            }
+          }
+        );
+      } catch (error) {
+        await redis.xadd(
+          keys.redisErrorStream,
+          "*",
+          ...[error.message, error.stack]
+        );
+      }
     });
   }
   await listenForMessage(lastId);
 }
-
-listenForMessage();
+async function scraperWorker() {
+  try {
+    await redis.xgroup(
+      "CREATE",
+      keys.redisStreamName,
+      keys.redisConsumerGoupName,
+      "$",
+      "MKSTREAM",
+      (err, res) => {
+        if (err) {
+          console.error(`[${process.pid}] -> group already exist`);
+        }
+      }
+    );
+  } catch (error) {
+    console.error(`[${process.pid}] -> group already exist`);
+  }
+  try {
+    browser = await puppeteer.connect({
+      browserWSEndpoint: keys.browserConnection,
+    });
+    await listenForMessage();
+  } catch (error) {
+    console.error(error);
+    throw error;
+  } finally {
+    await browser?.close();
+  }
+}
+scraperWorker();

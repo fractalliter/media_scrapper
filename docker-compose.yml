@@ -68,6 +68,7 @@ services:
       - PG_USER=postgres
       - REDIS_CONSUMER_GROUP_NAME=scraper
       - REDIS_STREAM_NAME =url_stream
+      - REDIS_ERROR_STREAM =backend.error
       - BROWSER_HOST=browser
       - BROWSER_PORT=3000
     #deploy:
