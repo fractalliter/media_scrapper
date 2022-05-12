@@ -12,6 +12,10 @@ services:
     image: 'redis:latest'
     ports:
       - '6379:6379'
+  browser:
+    image: 'browserless/chrome:latest'
+    ports:
+      - "3000:3000"
   nginx:
     depends_on:
       - api
@@ -32,6 +36,8 @@ services:
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+    depends_on:
+      - redis
   client:
     stdin_open: true
     build:
@@ -48,6 +54,10 @@ services:
     volumes:
       - /app/node_modules
       - ./scraper:/app
+    depends_on:
+      - redis
+      - db
+      - browser
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
@@ -58,6 +68,8 @@ services:
       - PG_USER=postgres
       - REDIS_CONSUMER_GROUP_NAME=scraper
       - REDIS_STREAM_NAME =url_stream
+      - BROWSER_HOST=browser
+      - BROWSER_PORT=3000
     #deploy:
     #  mode: replicated
     #  replicas: 5
@@ -69,6 +81,9 @@ services:
     volumes:
       - /app/node_modules
       - ./worker:/app
+    depends_on:
+      - redis
+      - db
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
