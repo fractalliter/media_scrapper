@@ -3,7 +3,7 @@
     "ioredis": "^5.0.4",
     "nodemon": "2.0.16",
     "pg": "^8.7.3",
-    "puppeteer": "^14.0.0",
+    "puppeteer-core": "^14.0.0",
     "typeorm": "^0.3.6"
   },
   "scripts": {
