@@ -9,7 +9,7 @@ module.exports = new DataSource({
   username: keys.pgUser,
   password: keys.pgPassword,
   database: keys.pgDatabase,
-  entities: [require("../entity/media")],
+  entities: [require("../entity/media").entity],
   synchronize: true,
   logging: false,
 });
