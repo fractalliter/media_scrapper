@@ -8,7 +8,7 @@ const dataSource = new DataSource({
   username: keys.pgUser,
   password: keys.pgPassword,
   database: keys.pgDatabase,
-  entities: [require("../entity/url"), require("../entity/media").entity],
+  entities: [require("../entity/media").entity],
   synchronize: true,
   logging: false,
 });

@@ -22,15 +22,16 @@ services:
       - client
     restart: always
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       context: ./nginx
     ports:
       - '3050:80'
   api:
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       context: ./server
     volumes:
+      - /app/node_modules
       - ./server:/app
     ports:
       - '5000:5000'
@@ -48,16 +49,18 @@ services:
   client:
     stdin_open: true
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       context: ./client
     volumes:
+      - /app/node_modules
       - ./client:/app
   scraper:
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       context: ./scraper
     restart: unless-stopped
     volumes:
+      - /app/node_modules
       - ./scraper:/app
     depends_on:
       - redis
