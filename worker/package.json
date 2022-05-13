@@ -3,6 +3,7 @@
     "ioredis": "^5.0.4",
     "nodemon": "2.0.16",
     "pg": "^8.7.3",
+    "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.6"
   },
   "scripts": {

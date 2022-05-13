@@ -57,7 +57,7 @@ class Fib extends Component {
       <div>
         <form onSubmit={this.handleSubmit}>
           <label>Enter your urls:</label>
-          <input
+          <textarea
             value={this.state.urls}
             onChange={(event) =>
               this.setState({ urls: event.target.value?.split(",") })

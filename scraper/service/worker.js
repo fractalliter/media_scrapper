@@ -33,12 +33,21 @@ async function listenForMessage(lastId = ">") {
             Array.from(document.images).map((image) => ({
               url: image.src,
               media_type: "image",
-              media_metadata: image,
+              media_metadata: {
+                width: image.width,
+                height: image.height,
+                alt: image.alt,
+              },
             })),
             Array.from(document.getElementsByTagName("video")).map((video) => ({
               url: video.src,
               media_type: "video",
-              media_metadata: video,
+              media_metadata: {
+                width: video.width,
+                height: video.height,
+                duration: video.duration,
+                title: video.title,
+              },
             })),
           ].flat()
         );

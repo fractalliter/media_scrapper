@@ -33,11 +33,19 @@ services:
     volumes:
       - /app/node_modules
       - ./server:/app
+    ports:
+      - '5000:5000'
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - PG_HOST=db
+      - PG_PORT=5432
+      - PG_PASSWORD=postgres
+      - PG_DATABASE=media
+      - PG_USER=postgres
     depends_on:
       - redis
+      - db
   client:
     stdin_open: true
     build:
