@@ -33,8 +33,6 @@ services:
     volumes:
       - /app/node_modules
       - ./server:/app
-    ports:
-      - '5000:5000'
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
