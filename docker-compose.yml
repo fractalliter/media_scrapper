@@ -30,8 +30,6 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./server
-    volumes:
-      - ./server:/app
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
@@ -48,15 +46,11 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./client
-    volumes:
-      - ./client:/app
   scraper:
     build:
       dockerfile: Dockerfile
       context: ./scraper
     restart: unless-stopped
-    volumes:
-      - ./scraper:/app
     depends_on:
       - redis
       - db

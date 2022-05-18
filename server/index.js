@@ -26,7 +26,6 @@ app.post("/url/", async (req, res) => {
 });
 
 app.get("/media", async (req, res) => {
-  console.log(req.query);
   const { page = 1, size = 10, category } = req.query;
   const [medias, total] = await mediaRepo.findAndCount({
     where: { media_type: category },
